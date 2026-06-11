@@ -1,4 +1,4 @@
-name: Pipeline Completo de Integración Continuada (CI)
+name: Pipeline Completo de Integración Continua (CI)
 
 on:
   push:

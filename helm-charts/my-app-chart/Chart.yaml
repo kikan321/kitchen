@@ -1,0 +1,6 @@
+apiVersion: v2
+name: my-app-chart
+description: A Helm Chart for my portfolio web application
+type: application
+version: 1.0.0      # The pipeline will append the "-sha.XXXXXXX" automatically
+appVersion: "1.0.0"

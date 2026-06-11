@@ -1,6 +1,8 @@
 # 🚀 Automated Cloud-Native CI/CD & Helm Registry Pipeline
 
-An enterprise-grade, event-driven DevOps pipeline that automates software integration, security compliance, container packaging, and Kubernetes package distribution utilizing a fully open-source, serverless architecture.
+An enterprise-grade, event-driven DevOps ecosystem designed around a robust multi-tier pipeline architecture. 
+
+The primary workflow orchestrates the entire Continuous Integration (CI) lifecycle—governing source code validation, static syntax analysis, automated container compilation, and rigorous security vulnerability scanning. Upon a successful run, this initial stage dynamically broadcasts a completion event that triggers a secondary, chained workflow. This independent pipeline programmatically builds, tags, packages, and indexes a localized Helm Chart, embedding the fresh, immutable Docker image artifact into Kubernetes manifests for cloud-native distribution.
 
 ---
 
@@ -43,6 +45,29 @@ Every time code changes in this repository, a series of automated triggers orche
 
 ---
 
+## 🔍 Detailed Pipeline Breakdown
+
+### 1. First Pipeline: The Complete CI Lifecycle (`ci.yml`)
+* **Trigger:** Automated via a code `push` or manual `workflow_dispatch` to the `main` branch.
+* **Execution Workflow:**
+  1. **Checkout:** Fetches raw source assets from Git via `actions/checkout@v4`.
+  2. **Linting:** Runs static code testing using **Hadolint** to audit Dockerfile architecture [🔒].
+  3. **Authentication:** Handles secure cryptographic handshakes to authenticate against **Docker Hub** [🔒].
+  4. **Compilation:** Compiles raw application code and static HTML into a local Docker layer container [🔒].
+  5. **Security Scanning:** Runs deep security compliance and CVE vulnerability scanning via **Trivy (Aqua Security)** [🔒].
+  6. **Registry Push:** Publishes the verified, immutable container to the registry using the unique **Git Commit SHA** as its tag [🔒].
+
+### 2. Second Pipeline: Dynamic Helm Package & Publish (`helm-publish.yml`)
+* **Trigger:** Automatically intercepting the completion signature of the first workflow via `on: workflow_run` [🔒].
+* **Execution Workflow:**
+  1. **Validation:** Verifies that the upstream CI lifecycle finished with a `success` conclusion status [🔒].
+  2. **Environment Setup:** Provisions runtime infrastructure with the **Helm CLI** inside the runner virtual machine [🔒].
+  3. **Dependency Injection:** Programmatically modifies `Chart.yaml` and `values.yaml` in memory, replacing generic placeholders with the current **Git Commit SHA** [🔒].
+  4. **Packaging:** Compiles the targeted configuration charts into binary asset archives (`.tgz` packages) [🔒].
+  5. **Distribution:** Provisions remote public access by deploying the compressed tarballs to **GitHub Releases** and committing the updated deployment ledger (`index.yaml`) directly to the serverless **`gh-pages`** hosting branch [🔒].
+
+---
+
 ## 🌿 Branching Strategy & Component Roles
 
 To maintain absolute stability and clean engineering habits, this repository uses isolated git branches and release layers with specific responsibilities:
@@ -79,7 +104,7 @@ Once the multi-tier automation finishes executing successfully, the application 
 
 ```bash
 # 1. Add this custom, automated Helm repository to your cluster
-helm repo add kitchen-repo https://kikan321.github.io/kitchen/index.yaml
+helm repo add kitchen-repo https://kikan321.github.io/kitchen/
 
 # 2. Update your local registry cache indexes
 helm repo update

@@ -1,4 +1,4 @@
-# 🚀 Automated Cloud-Native CI/CD & Helm Registry Pipeline
+# 🚀 Pipeline Event-Driven Pipeline Chaining with GitHub Actions: From CI to Automated Helm Registry
 
 An enterprise-grade, event-driven DevOps ecosystem designed around a robust multi-tier pipeline architecture powered by **GitHub Actions**. 
 

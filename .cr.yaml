@@ -1,0 +1,6 @@
+# Chart Releaser Configuration File
+owner: kikan321
+repo: kitchen
+charts-dir: helm-charts
+target-cumulus: gh-pages
+index-path: index.html

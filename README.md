@@ -79,7 +79,7 @@ Once the multi-tier automation finishes executing successfully, the application 
 
 ```bash
 # 1. Add this custom, automated Helm repository to your cluster
-helm repo add kitchen-repo https://github.io
+helm repo add kitchen-repo https://kikan321.github.io/kitchen/index.yaml
 
 # 2. Update your local registry cache indexes
 helm repo update

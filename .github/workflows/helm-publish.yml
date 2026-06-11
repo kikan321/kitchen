@@ -1,0 +1,70 @@
+name: Helm Chart Package and Publish
+
+on:
+  workflow_run:
+    workflows: ["Pipeline Completo de Integración Continua (CI)"] # Must match your ci.yml name exactly
+    types:
+      - completed
+
+permissions:
+  contents: write # Allows the workflow to create GitHub Releases and upload files
+
+jobs:
+  publish-chart:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      # =================================================================
+      # STEP 1: CHECKOUT SOURCE CODE
+      # =================================================================
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetches full history for proper chart versioning
+
+      # =================================================================
+      # STEP 2: CONFIGURE GIT IDENTITY
+      # =================================================================
+      - name: Configure Git bot identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@://github.com"
+
+      # =================================================================
+      # STEP 3: INSTALL HELM CLI
+      # =================================================================
+      - name: Install Helm CLI
+        uses: azure/setup-helm@v4
+        with:
+          version: 'v3.14.0'
+
+      # =================================================================
+      # STEP 4: INJECT COMMIT ID INTO HELM MANIFESTS
+      # =================================================================
+      - name: Inject Git Commit ID into Chart.yaml and values.yaml
+        run: |
+          # 1. Extract short SHA (7 characters) from the triggering commit
+          SHORT_SHA=$(echo "${{ github.event.workflow_run.head_sha }}" | cut -c1-7)
+          LONG_SHA="${{ github.event.workflow_run.head_sha }}"
+          
+          # 2. Update Helm Chart version with build metadata (e.g., 1.0.0-sha.a1b2c3d)
+          CHART_FILE="helm-charts/my-app-chart/Chart.yaml"
+          BASE_VERSION=$(grep '^version:' $CHART_FILE | awk '{print $2}')
+          sed -i "s/^version:.*/version: ${BASE_VERSION}-sha.${SHORT_SHA}/" $CHART_FILE
+          
+          # 3. Inject full commit SHA as the Docker image tag in values.yaml
+          VALUES_FILE="helm-charts/my-app-chart/values.yaml"
+          sed -i "s/tag:.*/tag: \"${LONG_SHA}\"/" $VALUES_FILE
+          
+          echo "Dependency injection completed successfully."
+
+      # =================================================================
+      # STEP 5: PACKAGE AND RELEASE TO GITHUB RELEASES
+      # =================================================================
+      - name: Run Chart Releaser Tool
+        uses: helm/chart-releaser-action@v1.6.0
+        with:
+          charts_dir: helm-charts # <--- Updated to target your new top-level folder
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}" # Handled automatically by GitHub

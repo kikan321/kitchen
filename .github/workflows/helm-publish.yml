@@ -65,6 +65,9 @@ jobs:
       - name: Run Chart Releaser Tool
         uses: helm/chart-releaser-action@v1.6.0
         with:
-          charts_dir: helm-charts # <--- Updated to target your new top-level folder
+          charts_dir: helm-charts
+          # This tells the tool to create and manage the index file properly
+          config: .cr.yaml 
         env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}" # Handled automatically by GitHub
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+

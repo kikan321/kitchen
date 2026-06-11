@@ -1,0 +1,6 @@
+replicaCount: 1
+
+image:
+  repository: caruel27/nginx-test # Updated with your verified Docker Hub username
+  pullPolicy: IfNotPresent
+  tag: "" # Kept blank; the pipeline will inject the Git SHA automatically

@@ -3,4 +3,4 @@ owner: kikan321
 repo: kitchen
 charts-dir: helm-charts
 target-branch: gh-pages
-index-path: index.yaml
+

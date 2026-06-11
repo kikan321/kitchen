@@ -31,4 +31,14 @@ entries:
     urls:
     - https://github.com/kikan321/kitchen/releases/download/my-app-chart-1.0.0-sha.2826a5e/my-app-chart-1.0.0-sha.2826a5e.tgz
     version: 1.0.0-sha.2826a5e
-generated: "2026-06-11T19:35:07.815724427Z"
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-06-11T19:40:29.044187014Z"
+    description: A Helm Chart for my portfolio web application
+    digest: 9122be723af0425119f5d9d95c2f8ee5383c292b9e1dcd24366a158262897968
+    name: my-app-chart
+    type: application
+    urls:
+    - https://github.com/kikan321/kitchen/releases/download/my-app-chart-1.0.0-sha.031c677/my-app-chart-1.0.0-sha.031c677.tgz
+    version: 1.0.0-sha.031c677
+generated: "2026-06-11T19:40:29.044209957Z"

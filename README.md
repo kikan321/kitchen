@@ -1,8 +1,8 @@
 # 🚀 Automated Cloud-Native CI/CD & Helm Registry Pipeline
 
-An enterprise-grade, event-driven DevOps ecosystem designed around a robust multi-tier pipeline architecture. 
+An enterprise-grade, event-driven DevOps ecosystem designed around a robust multi-tier pipeline architecture powered by **GitHub Actions**. 
 
-The primary workflow orchestrates the entire Continuous Integration (CI) lifecycle—governing source code validation, static syntax analysis, automated container compilation, and rigorous security vulnerability scanning. Upon a successful run, this initial stage dynamically broadcasts a completion event that triggers a secondary, chained workflow. This independent pipeline programmatically builds, tags, packages, and indexes a localized Helm Chart, embedding the fresh, immutable Docker image artifact into Kubernetes manifests for cloud-native distribution.
+The primary **GitHub Actions** workflow orchestrates the entire Continuous Integration (CI) lifecycle—governing source code validation, static syntax analysis, automated container compilation, and rigorous security vulnerability scanning. Upon a successful run, this initial stage dynamically broadcasts a completion event that triggers a secondary, chained **GitHub Actions** workflow. This independent pipeline programmatically builds, tags, packages, and indexes a localized Helm Chart, embedding the fresh, immutable Docker image artifact into Kubernetes manifests for cloud-native distribution.
 
 ---
 

@@ -1,0 +1,58 @@
+name: Pipeline Completo de Integración Continuada (CI)
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  ci-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. Descargar el código del repositorio
+        uses: actions/checkout@v4
+
+      # =================================================================
+      # CAMBIO 1: Apuntar Hadolint a la carpeta CICD
+      # =================================================================
+      - name: 2. Ejecutar Linter de Docker (Hadolint)
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: CICD/Dockerfile # <--- Agregamos la ruta de la carpeta
+
+      - name: 3. Iniciar sesión de forma segura en Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # =================================================================
+      # CAMBIO 2: Cambiar el contexto de construcción a la carpeta CICD
+      # =================================================================
+      - name: 4. Construir imagen Docker (Localmente en el Runner)
+        uses: docker/build-push-action@v5
+        with:
+          context: ./CICD # <--- Cambiamos el punto (.) por ./CICD
+          load: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/nginx-test:latest
+
+      - name: 5. Escanear imagen en busca de vulnerabilidades (Trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/nginx-test:latest'
+          format: 'table'
+          exit-code: '0'
+          severity: 'CRITICAL,HIGH'
+
+      # =================================================================
+      # CAMBIO 3: Cambiar el contexto también en el paso final de subida
+      # =================================================================
+      - name: 6. Subir imagen verificada a Docker Hub
+        uses: docker/build-push-action@v5
+        with:
+          context: ./CICD # <--- Cambiamos el punto (.) por ./CICD
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/nginx-test:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/nginx-test:${{ github.sha }}
